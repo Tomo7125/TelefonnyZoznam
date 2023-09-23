@@ -47,9 +47,9 @@ public class LoginController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Dashboard.fxml"));
         Parent root = loader.load();
 
-        UserData userData = new UserData(textFieldEmail.getText());
+        UserData userData = new UserData(textFieldEmail.getText()); // Vytvorenie objektu s údajmi
         DashBoardController dashboardController = loader.getController();
-        dashboardController.setUserData(userData);
+        dashboardController.setUserData(userData); // Nastavenie údajov v DashBoardController
 
         // Získanie hlavného Stage z triedy Start
         Stage stage = Start.getPrimaryStage();

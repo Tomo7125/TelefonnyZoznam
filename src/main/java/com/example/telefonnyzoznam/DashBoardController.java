@@ -12,8 +12,7 @@ import java.sql.Connection;
 import java.util.ResourceBundle;
 
 public class DashBoardController implements Initializable {
-    User user;
-
+    private User user = new User();
     @FXML
     private ImageView imageViewProfilovka;
     @FXML
@@ -43,12 +42,12 @@ public class DashBoardController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
         SpravcaKontaktov spravcaKontaktov = new SpravcaKontaktov(user.getEmail());
         listViewZoznamKontaktov.setItems(spravcaKontaktov.getOsoby());
     }
 
     public void setUserData(UserData userData) {
-        userData.setEmail(userData.getEmail());
-        user.setEmail(userData.getEmail());
+        this.user.setEmail(userData.getEmail());
     }
 }
