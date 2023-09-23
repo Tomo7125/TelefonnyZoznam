@@ -29,16 +29,39 @@ public class LoginController {
     private Button buttonRegister;
     @FXML
     private Label labelSprava;
+    Connection connection;
 
     @FXML
-    public void prihlasenie(){
+    public void prihlasenie() throws IOException {
 
         if (!textFieldEmail.getText().isEmpty() | !textFieldHeslo.getText().isEmpty()){
             if (kontrolaHesla(textFieldEmail.getText() , textFieldHeslo.getText())){
-                //TODO doplniť prepnutie na dashboard
+                prepniNaDashboard();
             }else labelSprava.setText("Email alebo heslo nieje správne");
 
         }else labelSprava.setText("Zadaj email a heslo");
+
+    }
+    public void prepniNaDashboard() throws IOException {
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("Dashboard.fxml"));
+        Parent root = loader.load();
+
+        UserData userData = new UserData(textFieldEmail.getText());
+        DashBoardController dashboardController = loader.getController();
+        dashboardController.setUserData(userData);
+
+        // Získanie hlavného Stage z triedy Start
+        Stage stage = Start.getPrimaryStage();
+
+        // Nastavenie nového layoutu ako scény
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+
+        // Zobrazenie nového layoutu
+        stage.setTitle("DashBoard");
+        stage.show();
+
 
     }
     @FXML
@@ -60,27 +83,24 @@ public class LoginController {
     }
     public boolean kontrolaHesla(String email , String password){
         boolean exists = false;
+        connection = DatabaseConnector.getInstance().getConnection();
 
 
-        try (Connection connection = DatabaseConnector.getInstance().getConnection()) {
             String sql = "SELECT COUNT(*) FROM \"user\" WHERE email = ? AND password = ?";
 
-            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-                preparedStatement.setString(1, email);
-                preparedStatement.setString(2, password);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, email);
+            preparedStatement.setString(2, password);
 
-                try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                    if (resultSet.next()) {
-                        int count = resultSet.getInt(1);
-                        exists = (count > 0);
-                    }
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    int count = resultSet.getInt(1);
+                    exists = (count > 0);
                 }
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
             }
-    } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+    }
 
         return exists;
     }
