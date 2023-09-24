@@ -79,8 +79,12 @@ public class DashBoardController implements Initializable {
                     labelCisloKontaktu.setText(k.cislo);
                 }
             }
-
         }
+    }
+    public void odoberKontaktzDB(){
+        spravcaKontaktov.odober(user.getEmail(), listViewZoznamKontaktov.getSelectionModel().getSelectedItem().toString());
+        spravcaKontaktov.obnovOsoby(user.getEmail());
+        listViewZoznamKontaktov.setItems(zoznamKontaktov());
     }
     @FXML
     public void pridajKontaktDoDB(){
@@ -94,10 +98,10 @@ public class DashBoardController implements Initializable {
         if (vysledok.isPresent()) {
             Kontakt kontakt = vysledok.get();
             spravcaKontaktov.pridaj(user.getEmail(), kontakt.meno , kontakt.cislo);
-
-            // Aktualizujte ListView po pridaní kontaktu
-            listViewZoznamKontaktov.getItems().setAll(zoznamKontaktov());
         }
+        spravcaKontaktov.obnovOsoby(user.getEmail());
+        listViewZoznamKontaktov.setItems(zoznamKontaktov());
+        labelPocetKontaktovPrihlaseneho.setText(String.valueOf(spravcaKontaktov.getOsoby().size()));
     }
     public ObservableList<String> zoznamKontaktov(){
         ObservableList<String> zoznam = FXCollections.observableArrayList();

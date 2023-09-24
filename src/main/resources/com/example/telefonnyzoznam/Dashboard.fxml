@@ -115,7 +115,7 @@
                               <Insets top="60.0" />
                            </VBox.margin>
                         </Button>
-                        <Button fx:id="buttonOdstranKontakt" mnemonicParsing="false" prefWidth="200.0" text="Odstrániť kontakt">
+                        <Button fx:id="buttonOdstranKontakt" onAction="#odoberKontaktzDB" mnemonicParsing="false" prefWidth="200.0" text="Odstrániť kontakt">
                            <VBox.margin>
                               <Insets top="20.0" />
                            </VBox.margin>
