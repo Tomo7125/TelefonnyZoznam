@@ -11,12 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SpravcaKontaktov {
+    String email;
 
-    public SpravcaKontaktov(String email) {
-        for (Kontakt zoznam : getContactsByEmail(email)){
-            osoby.add(zoznam);
-        }
-    }
 
     Connection connection;
 
@@ -33,12 +29,18 @@ public class SpravcaKontaktov {
         osoby.remove(osoba);
     }
 
+    public void obnovOsoby(String email) {
+        List<Kontakt> zoznam = getContactsByEmail(email);
+        for (Kontakt k : zoznam) {
+            osoby.add(k);
+        }
+    }
     public List<Kontakt> getContactsByEmail(String email) {
         connection = DatabaseConnector.getInstance().getConnection();
         List<Kontakt> contacts = new ArrayList<>();
 
 
-        String sql = "SELECT name, number FROM contacts WHERE email = ?";
+        String sql = "SELECT name, number FROM \"contacts\" WHERE email = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, email);

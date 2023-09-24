@@ -3,9 +3,17 @@ package com.example.telefonnyzoznam;
 public class UserData {
 
     private String email;
+    private static UserData instance;
 
-    public UserData(String email) {
-        this.email = email;
+    private UserData() {
+        // Privátny konštruktor, aby sa nedalo vytvárať viac inštancií
+    }
+
+    public static UserData getInstance() {
+        if (instance == null) {
+            instance = new UserData();
+        }
+        return instance;
     }
 
     public String getEmail() {

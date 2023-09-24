@@ -17,6 +17,7 @@ import java.sql.SQLException;
 
 public class LoginController {
 
+    private String userEmail;
     @FXML
     private Label labelPrihlasenie;
     @FXML
@@ -36,34 +37,29 @@ public class LoginController {
 
         if (!textFieldEmail.getText().isEmpty() | !textFieldHeslo.getText().isEmpty()){
             if (kontrolaHesla(textFieldEmail.getText() , textFieldHeslo.getText())){
-                prepniNaDashboard();
+                userEmail = textFieldEmail.getText();
+                UserData userData = UserData.getInstance();
+                userData.setEmail(userEmail);
+
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("Dashboard.fxml"));
+                Parent root = loader.load();
+
+                // Získanie hlavného Stage z triedy Start
+                Stage stage = Start.getPrimaryStage();
+
+                // Nastavenie nového layoutu ako scény
+                Scene scene = new Scene(root);
+                stage.setScene(scene);
+
+                // Zobrazenie nového layoutu
+                stage.setTitle("DashBoard");
+                stage.show();
             }else labelSprava.setText("Email alebo heslo nieje správne");
 
         }else labelSprava.setText("Zadaj email a heslo");
 
     }
-    public void prepniNaDashboard() throws IOException {
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("Dashboard.fxml"));
-        Parent root = loader.load();
-
-        UserData userData = new UserData(textFieldEmail.getText()); // Vytvorenie objektu s údajmi
-        DashBoardController dashboardController = loader.getController();
-        dashboardController.setUserData(userData); // Nastavenie údajov v DashBoardController
-
-        // Získanie hlavného Stage z triedy Start
-        Stage stage = Start.getPrimaryStage();
-
-        // Nastavenie nového layoutu ako scény
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-
-        // Zobrazenie nového layoutu
-        stage.setTitle("DashBoard");
-        stage.show();
-
-
-    }
     @FXML
     public void registracia() throws IOException {
 
