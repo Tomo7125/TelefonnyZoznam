@@ -4,17 +4,22 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
+import javafx.util.Callback;
 
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class DashBoardController implements Initializable {
@@ -77,12 +82,67 @@ public class DashBoardController implements Initializable {
 
         }
     }
+    @FXML
+    public void pridajKontaktDoDB(){
+        Dialog<Kontakt> dialog = new Dialog<>();
+        dialog.setTitle("Nový kontakt");
+        dialog.setWidth(350);
+        dialog.setHeight(250);
+
+        vytvorObsahDialogu(dialog);
+        final Optional<Kontakt> vysledok = dialog.showAndWait();
+        if (vysledok.isPresent()) {
+            Kontakt kontakt = vysledok.get();
+            spravcaKontaktov.pridaj(user.getEmail(), kontakt.meno , kontakt.cislo);
+
+            // Aktualizujte ListView po pridaní kontaktu
+            listViewZoznamKontaktov.getItems().setAll(zoznamKontaktov());
+        }
+    }
     public ObservableList<String> zoznamKontaktov(){
         ObservableList<String> zoznam = FXCollections.observableArrayList();
         for (Kontakt k : spravcaKontaktov.getOsoby()){
             zoznam.add(k.meno);
         }return zoznam;
     }
+    public void vytvorObsahDialogu(Dialog<Kontakt> dialog){
+
+        ButtonType createButtonType = new ButtonType("OK" , ButtonBar.ButtonData.OK_DONE);
+
+        dialog.getDialogPane().getButtonTypes().setAll(createButtonType, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setPadding(new Insets(10));
+        grid.setHgap(10);
+        grid.setVgap(10);
+
+        TextField menoTextField = new TextField();
+        TextField cisloTextField = new TextField();
+        Label menoLabel = new Label("Meno : ");
+        Label cisloLabel = new Label("Cislo : ");
+
+        grid.add(menoLabel,0,0);
+        grid.add(menoTextField,1,0);
+        grid.add(cisloLabel,0,1);
+        grid.add(cisloTextField,1,1);
+
+        dialog.setResultConverter(new Callback<ButtonType, Kontakt>() {
+            @Override
+            public Kontakt call(ButtonType param) {
+                try {
+                    return new Kontakt(menoTextField.getText(), cisloTextField.getText());
+                } catch (IllegalArgumentException ex) {
+                    System.out.println("Chyba: " + ex.getMessage());
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "Kontakt sa nepodarilo nastaviť!");
+                    alert.showAndWait();
+                    return null;
+                }
+            }
+        });
+        dialog.getDialogPane().setContent(grid);
+
+        }
     public String zistiMenoPodlaEmailu(String email) {
         String meno = null;
         try {

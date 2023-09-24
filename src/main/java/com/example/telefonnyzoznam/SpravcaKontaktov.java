@@ -22,10 +22,28 @@ public class SpravcaKontaktov {
         return osoby;
     }
 
-    public void pridaj(Kontakt osoba){
-        osoby.add(osoba);
+    public void pridaj(String email, String meno , String cislo){
+        connection = DatabaseConnector.getInstance().getConnection();
+        String sql = "INSERT INTO \"contacts\" (email, name, number) VALUES (?, ?, ?)";
+
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, email);
+            statement.setString(2, meno);
+            statement.setString(3, cislo);
+
+            int riadky = statement.executeUpdate();
+            if (riadky > 0) {
+                System.out.println("Kontakt bol úspešne pridaný.");
+            } else {
+                System.out.println("Pridanie kontaktu zlyhalo.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("Chyba pri pridávaní kontaktu do databázy: " + e.getMessage());
+        }
     }
     public void odober(Kontakt osoba){
+
         osoby.remove(osoba);
     }
 

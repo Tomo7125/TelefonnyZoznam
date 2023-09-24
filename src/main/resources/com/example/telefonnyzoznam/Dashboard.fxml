@@ -110,7 +110,7 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Button fx:id="buttonPridajKontakt" mnemonicParsing="false" prefWidth="200.0" text="Pridať kontakt">
+                        <Button fx:id="buttonPridajKontakt" onAction="#pridajKontaktDoDB" mnemonicParsing="false" prefWidth="200.0" text="Pridať kontakt">
                            <VBox.margin>
                               <Insets top="60.0" />
                            </VBox.margin>
